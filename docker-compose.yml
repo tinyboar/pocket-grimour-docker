@@ -14,20 +14,16 @@ services:
     networks: [internal]
 
   grimoire:
-    build: .
+    image: tinyboar/pocket-grimoire:latest
     container_name: grimoire
     restart: unless-stopped
-    image: tinyboar/pocket-grimoire
     environment:
       APP_SECRET: "ChangeMe"
       DATABASE_URL: "postgresql://symfony:symfony@db:5432/app?serverVersion=15"
-    volumes:
-      - ./var:/srv/app/var
-      - ./entrypoint.sh:/entrypoint.sh
-      - shared_php:/srv/app
-    command: /entrypoint.sh
-    depends_on: [db]     
-    networks: [internal]
+    depends_on:
+      - db
+    networks:
+      - internal
 
   nginx:
     image: nginx:alpine
@@ -36,14 +32,14 @@ services:
       - "8080:80"
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-      - shared_php:/srv/app
-    depends_on: [grimoire]
+    depends_on:
+      - grimoire
     restart: unless-stopped
-    networks: [internal]
+    networks:
+      - internal
 
 volumes:
   db_data:
-  shared_php:
 
 networks:
   internal:
