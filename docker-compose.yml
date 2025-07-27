@@ -14,8 +14,6 @@ services:
     networks: [internal]
 
   grimoire:
-    build: .
-    container_name: grimoire
     image: tinyboar/pocket-grimoire:latest
     container_name: grimoire
     restart: unless-stopped
