@@ -1,6 +1,3 @@
-######################################################################
-#                       ── 1. FRONT‑ASSETS ──                       #
-######################################################################
 FROM node:20-alpine AS assets
 WORKDIR /srv/app
 
@@ -12,15 +9,9 @@ COPY .yarnrc.yml .yarnrc.yml
 COPY .pnp.* ./
 
 RUN yarn install --immutable
-
 COPY . .
-
 RUN yarn run encore production
 
-
-######################################################################
-#                      ── 2. PHP‑DEPENDENCIES ──                    #
-######################################################################
 FROM composer:2 AS vendors
 WORKDIR /srv/app
 
@@ -28,12 +19,9 @@ COPY composer.json composer.lock ./
 RUN composer install \
     --no-dev --prefer-dist \
     --no-scripts --no-interaction \
-    --apcu-autoloader
+    --apcu-autoloader \
+    --optimize-autoloader
 
-
-######################################################################
-#                       ── 3. RUNTIME‑PHP ──                         #
-######################################################################
 FROM php:8.2-fpm-alpine
 WORKDIR /srv/app
 
@@ -48,13 +36,12 @@ COPY --from=vendors /srv/app/vendor        ./vendor
 COPY --from=assets  /srv/app/public/build  ./public/build
 COPY . .
 
-RUN mkdir -p var && chown -R www-data:www-data var
-RUN php bin/console cache:clear --no-warmup --no-interaction
+RUN mkdir -p var/cache var/log && \
+    chown -R www-data:www-data var
 
 COPY entrypoint.sh /srv/app/entrypoint.sh
 RUN chmod +x /srv/app/entrypoint.sh
 
-# Эта строка экспортирует собранный код в том виде, как он должен быть в контейнере
 RUN mkdir -p /export && cp -r /srv/app /export/app
 
 USER www-data

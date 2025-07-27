@@ -1,53 +1,33 @@
-# make build      # Собрать образ
-# make up         # Запустить проект
-# make down       # Остановить проект и удалить тома
-# make rebuild    # Полная пересборка
-# make logs       # Смотреть логи
-# make shell      # Зайти внутрь grimoire-контейнера
-# make dbshell    # Подключиться к PostgreSQL
-# make publish    # Запушить в Docker Hub
+IMAGE = tinyboar/pocket-grimoire
+TAG = latest
+CONTAINER = pocket-grimoire
 
+.PHONY: build push pull run run-dev clean
 
-APP_NAME=tinyboar/pocket-grimoire
-COMPOSE=docker compose
-
-.PHONY: build rebuild up down logs prune shell dbshell publish
-
-## Сборка контейнера
 build:
-	docker build -t $(APP_NAME) .
+	docker build -t $(IMAGE):$(TAG) .
 
-## Чистая сборка: удаляет образ, собирает заново
-rebuild:
-	$(MAKE) down
-	docker rmi -f $(APP_NAME) || true
-	$(MAKE) build
+push:
+	docker push $(IMAGE):$(TAG)
 
-## Запуск проекта
-up:
-	$(COMPOSE) up -d
+pull:
+	docker pull $(IMAGE):$(TAG)
 
-## Остановка проекта и удаление контейнеров
-down:
-	$(COMPOSE) down --volumes
+# Подключение к БД внутри докер-сети (из docker-compose)
+run:
+	docker run --rm --network pocket-grimoire_internal -p 8080:80 \
+		-e DATABASE_URL="postgresql://symfony:symfony@db:5432/app?serverVersion=15" \
+		--name $(CONTAINER) \
+		$(IMAGE):$(TAG)
 
-## Просмотр логов
-logs:
-	$(COMPOSE) logs -f
+# Подключение к БД на хосте через host.docker.internal (если доступно)
+run-dev:
+	docker run --rm -p 8080:80 \
+		-e DATABASE_URL="postgresql://symfony:symfony@host.docker.internal:5432/app?serverVersion=15" \
+		--name $(CONTAINER) \
+		$(IMAGE):$(TAG)
 
-## Очистка неиспользуемых томов и контейнеров
-prune:
-	docker system prune -f
+clean:
+	docker rm -f $(CONTAINER) || true
 	docker volume prune -f
-
-## Открыть bash внутри PHP-контейнера
-shell:
-	docker exec -it grimoire sh
-
-## Подключиться к базе PostgreSQL
-dbshell:
-	docker exec -it postgres psql -U symfony -d app
-
-## Опубликовать образ в Docker Hub (нужен docker login)
-publish:
-	docker push $(APP_NAME)
+	docker image rm $(IMAGE):$(TAG) || true
