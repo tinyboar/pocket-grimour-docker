@@ -2,6 +2,8 @@
 
 A Docker-ready framework application with Symfony backend, Webpack Encore frontend, PostgreSQL, and Mailcatcher.
 
+> Based on the original project: [github.com/Skateside/pocket-grimoire](https://github.com/Skateside/pocket-grimoire)
+
 ---
 
 ## 🚀 Part 1: Run Locally via Docker Hub Image
@@ -80,6 +82,6 @@ By default, login is disabled. Add a `.env.local` file to configure credentials 
 
 ## 🤝 Contact
 
-**Author**: [tinyboar on GitHub](https://github.com/tinyboar)
-
-Docker Hub: [tinyboar/pocket-grimoire](https://hub.docker.com/r/tinyboar/pocket-grimoire)
+**Author**: [@tinyboar](https://t.me/tinyboar)  
+**GitHub**: [tinyboar](https://github.com/tinyboar)  
+**Docker Hub**: [tinyboar/pocket-grimoire](https://hub.docker.com/r/tinyboar/pocket-grimoire)
