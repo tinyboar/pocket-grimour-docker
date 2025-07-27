@@ -1,0 +1,48 @@
+{
+  "entrypoints": {
+    "js/main": {
+      "js": [
+        "/build/runtime.js",
+        "/build/assets_js_classes_Dialog_js-assets_js_lib_qrcode-svg_js-assets_js_utils_elements_js.js",
+        "/build/js/main.js"
+      ]
+    },
+    "js/sheet": {
+      "js": [
+        "/build/runtime.js",
+        "/build/assets_js_classes_Dialog_js-assets_js_lib_qrcode-svg_js-assets_js_utils_elements_js.js",
+        "/build/js/sheet.js"
+      ]
+    },
+    "js/dialog": {
+      "js": [
+        "/build/runtime.js",
+        "/build/js/dialog.js"
+      ]
+    },
+    "css/main": {
+      "js": [
+        "/build/runtime.js"
+      ],
+      "css": [
+        "/build/css/main.css"
+      ]
+    },
+    "css/sheet": {
+      "js": [
+        "/build/runtime.js"
+      ],
+      "css": [
+        "/build/css/sheet.css"
+      ]
+    },
+    "css/dialog": {
+      "js": [
+        "/build/runtime.js"
+      ],
+      "css": [
+        "/build/css/dialog.css"
+      ]
+    }
+  }
+}
