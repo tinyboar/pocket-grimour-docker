@@ -1,28 +1,43 @@
 # 📘 Pocket Grimoire (Dockerized)
 
-A deploy-ready framework application using Docker Compose. Includes frontend (Webpack Encore), backend with Symfony, PostgreSQL, and Mailcatcher.
+A Docker-ready framework application with Symfony backend, Webpack Encore frontend, PostgreSQL, and Mailcatcher.
 
 ---
 
-## 🚀 Quick Start (Local)
+## 🚀 Part 1: Run Locally via Docker Hub Image
+
+> No need to clone the repo or build anything — just pull and run.
+
+```bash
+# Pull and run the latest image
+docker pull tinyboar/pocket-grimoire:latest
+
+docker run -p 8080:80 tinyboar/pocket-grimoire:latest
+```
+
+* App: [http://localhost:8080](http://localhost:8080)
+
+> ⚠️ Note: This method assumes the image includes built assets and dependencies.
+
+---
+
+## 🛠️ Part 2: Clone and Build Manually
 
 ```bash
 # Clone the repository
 https://github.com/tinyboar/pocket-grimoire.git
 cd pocket-grimoire
 
-# Build and start
+# Build and run
 docker compose up --build
 ```
 
-After startup:
-
 * App: [http://localhost:8080](http://localhost:8080)
-* Mail (Mailcatcher): [http://localhost:1080](http://localhost:1080)
+* Mailcatcher: [http://localhost:1080](http://localhost:1080)
 
 ---
 
-## ⚙️ Services in docker-compose
+## ⚙️ Docker Compose Services
 
 | Service  | Purpose            |
 | -------- | ------------------ |
@@ -33,31 +48,19 @@ After startup:
 
 ---
 
-## 🧱 Docker Build Stages
+## 🧱 Dockerfile Structure
 
-Project is built in three stages:
+Multi-stage Docker build:
 
-1. **assets** — Node/Yarn 4 + Encore for frontend build
+1. **assets** — Node + Yarn 4 + Encore for frontend build
 2. **vendors** — Composer without dev dependencies
-3. **runtime** — php-fpm, with vendor/ and public/build copied
-
----
-
-## 🐳 Run from Docker Hub (No Source Required)
-
-You can use the published image directly:
-
-```bash
-docker run -p 8080:80 tinyboar/pocket-grimoire:latest
-```
-
-> ⚠️ This assumes migrations, dependencies, and asset builds are already done inside the image.
+3. **runtime** — php-fpm with vendor/ and public/build copied in
 
 ---
 
 ## 📁 Ignored Folders
 
-In `.dockerignore` and `.gitignore`:
+In `.gitignore` and `.dockerignore`:
 
 ```
 .git
@@ -69,14 +72,14 @@ var
 
 ---
 
-## 🔑 Authentication
+## 🔐 Authorization
 
-By default, login is not protected. Add a `.env.local` file with environment variables if needed.
+By default, login is disabled. Add a `.env.local` file to configure credentials if needed.
 
 ---
 
 ## 🤝 Contact
 
-**Author**: [tinyboar](https://hub.docker.com/u/tinyboar)
+**Author**: [tinyboar on GitHub](https://github.com/tinyboar)
 
 Docker Hub: [tinyboar/pocket-grimoire](https://hub.docker.com/r/tinyboar/pocket-grimoire)
