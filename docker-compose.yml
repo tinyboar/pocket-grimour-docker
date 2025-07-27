@@ -1,0 +1,47 @@
+# docker-compose.yml
+services:
+  db:                                # ← единое имя
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: app
+      POSTGRES_USER: symfony
+      POSTGRES_PASSWORD: symfony
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks: [internal]
+
+  app:
+    build: .
+    container_name: pocket-app
+    restart: unless-stopped
+    environment:
+      APP_SECRET: "ChangeMe"
+      DATABASE_URL: "postgresql://symfony:symfony@db:5432/app?serverVersion=15"
+    volumes:
+      - .:/srv/app
+    depends_on: [db]                 # ← тоже db
+    networks: [internal]
+    command: >
+      sh -c "
+        php bin/console doctrine:migrations:migrate --no-interaction &&
+        php bin/console pocket-grimoire:import --type=teams,editions,characters,jinxes --locale=en_GB --new=yes &&
+        php-fpm
+      "
+
+  web:
+    image: nginx:1.25-alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - .:/srv/app
+    depends_on: [app]
+    networks: [internal]
+
+volumes:
+  db_data:
+
+networks:
+  internal:
+    driver: bridge
